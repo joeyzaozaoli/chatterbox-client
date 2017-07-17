@@ -77,6 +77,7 @@ $(document).ready(function() {
     event.preventDefault();
     var message = {};
     message.text = $('#new-msg-body').val();
+    message.username = window.location.search.slice(10);
     message.roomname = $('#roomSelect').find(':selected').val();
     app.send(message);
     $('#new-msg-body').val('');
