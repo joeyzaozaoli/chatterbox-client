@@ -6,6 +6,13 @@ app.roomList = [];
 app.init = function() {
   app.fetch();
   setInterval(app.fetch, 5000);
+
+  $('#newRoom').click(function() {
+    var newRoom = prompt("Please name the new room:");
+    app.addRoomToList(newRoom);
+  });
+
+  $('#send').submit(app.handleSubmit);
 };
 
 app.fetch = function() {
@@ -60,6 +67,16 @@ app.renderRoom = function(room) {
   `);
 };
 
+app.handleSubmit = function(event) {
+  event.preventDefault();
+  var message = {};
+  message.text = $('#message').val();
+  message.username = window.location.search.slice(10);
+  message.roomname = $('#roomSelect').find(':selected').val();
+  app.send(message);
+  $('#message').val('');
+};
+
 app.send = function(msgObj) {
   $.ajax({
     url: app.server,
@@ -77,19 +94,4 @@ app.send = function(msgObj) {
 
 $(document).ready(function() {
   app.init();
-
-  $('#new-room').click(function() {
-    var newRoom = prompt("Please name the new room:");
-    app.addRoomToList(newRoom);
-  });
-
-  $('#new-msg').submit(function(event) {
-    event.preventDefault();
-    var message = {};
-    message.text = $('#new-msg-body').val();
-    message.username = window.location.search.slice(10);
-    message.roomname = $('#roomSelect').find(':selected').val();
-    app.send(message);
-    $('#new-msg-body').val('');
-  });
 });
