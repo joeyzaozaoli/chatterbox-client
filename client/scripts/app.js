@@ -13,6 +13,7 @@ app.fetch = function() {
     url: app.server,
     type: 'GET',
     data: {order: '-createdAt'},
+
     success: function(data) {
       console.log('get success', data);
 
@@ -21,10 +22,7 @@ app.fetch = function() {
         if (msgObj.roomname === $('#roomSelect').find(':selected').val()) {
           app.renderMessage(msgObj);
         }
-        if (!app.roomList.includes(msgObj.roomname)) {
-          app.roomList.push(msgObj.roomname);
-          app.renderRoom(msgObj.roomname);
-        }
+        app.addRoomToList(msgObj.roomname);
       });
     },
 
@@ -47,6 +45,13 @@ app.renderMessage = function(msgObj) {
       <span>@${msgObj.createdAt}</span>
     </div>
   `);
+};
+
+app.addRoomToList = function(room) {
+  if (!app.roomList.includes(room)) {
+    app.roomList.push(room);
+    app.renderRoom(room);
+  }
 };
 
 app.renderRoom = function(room) {
@@ -72,6 +77,11 @@ app.send = function(msgObj) {
 
 $(document).ready(function() {
   app.init();
+
+  $('#new-room').click(function() {
+    var newRoom = prompt("Please name the new room:");
+    app.addRoomToList(newRoom);
+  });
 
   $('#new-msg').submit(function(event) {
     event.preventDefault();
