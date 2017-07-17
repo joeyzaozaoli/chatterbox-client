@@ -5,7 +5,7 @@ app.roomList = [];
 
 app.init = function() {
   app.fetch();
-  setInterval(app.fetch, 600000);
+  setInterval(app.fetch, 5000);
 };
 
 app.fetch = function() {
@@ -18,13 +18,13 @@ app.fetch = function() {
 
       app.clearMessages();
       _.each(data.results, function(msgObj) {
-        app.renderMessage(msgObj);
+        if (msgObj.roomname === $('#roomSelect').find(':selected').val()) {
+          app.renderMessage(msgObj);
+        }
         if (!app.roomList.includes(msgObj.roomname)) {
           app.roomList.push(msgObj.roomname);
+          app.renderRoom(msgObj.roomname);
         }
-      });
-      _.each(app.roomList, function(room) {
-        app.renderRoom(room);
       });
     },
 
@@ -77,7 +77,8 @@ $(document).ready(function() {
     event.preventDefault();
     var message = {};
     message.text = $('#new-msg-body').val();
-    message.roomname = $('#rooms').find(':selected').val();
+    message.roomname = $('#roomSelect').find(':selected').val();
     app.send(message);
+    $('#new-msg-body').val('');
   });
 });
