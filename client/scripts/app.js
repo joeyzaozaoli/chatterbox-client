@@ -2,11 +2,12 @@ var app = {};
 
 app.server = 'http://parse.sfm8.hackreactor.com/chatterbox/classes/messages';
 app.roomList = [];
+app.friendList = [];
 
 app.init = function() {
   app.fetch();
   $('#roomSelect').change(app.fetch);
-  setInterval(app.fetch, 100000);
+  setInterval(app.fetch, 10000);
 
   $('#newRoom').click(function() {
     var newRoom = prompt("Please name the new room:");
@@ -29,6 +30,9 @@ app.fetch = function() {
       _.each(data.results, function(msgObj) {
         if (msgObj.roomname === $('#roomSelect').find(':selected').val()) {
           app.renderMessage(msgObj);
+          if (app.friendList.includes(msgObj.username)) {
+            $('.text').addClass('friend');
+          }
         }
         app.addRoomToList(msgObj.roomname);
       });
@@ -47,12 +51,16 @@ app.clearMessages = function() {
 app.renderMessage = function(msgObj) {
   $('#chats').append(`
     <div>
-      <span>${msgObj.text}</span>
-      <span>#${msgObj.username}</span>
+      <span class="text">${msgObj.text}</span>
+      <span class="userName">${msgObj.username}</span>
       <span>@${msgObj.roomname}</span>
       <span>@${msgObj.createdAt}</span>
     </div>
   `);
+
+  $('.userName').click(function(event) {
+    app.addFriendToList(event.target.textContent);
+  });
 };
 
 app.addRoomToList = function(room) {
@@ -91,6 +99,12 @@ app.send = function(msgObj) {
       console.log('send failure');
     }
   });
+};
+
+app.addFriendToList = function(friend) {
+  if (!app.friendList.includes(friend)) {
+    app.friendList.push(friend);
+  }
 };
 
 $(document).ready(function() {
