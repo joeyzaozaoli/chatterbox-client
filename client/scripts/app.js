@@ -5,7 +5,8 @@ app.roomList = [];
 
 app.init = function() {
   app.fetch();
-  setInterval(app.fetch, 5000);
+  $('#roomSelect').change(app.fetch);
+  setInterval(app.fetch, 100000);
 
   $('#newRoom').click(function() {
     var newRoom = prompt("Please name the new room:");
