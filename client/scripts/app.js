@@ -1,8 +1,8 @@
 var app = {};
 
 app.server = 'http://parse.sfm8.hackreactor.com/chatterbox/classes/messages';
-app.roomList = [];
-app.friendList = [];
+app.roomList = {};
+app.friendList = {};
 
 app.init = function() {
   // render on initialization
@@ -19,7 +19,9 @@ app.init = function() {
   // update model on user event
   $('#newRoom').click(function() {
     var newRoom = prompt("Please name the new room:");
-    app.addRoomToList(newRoom);
+    if (app.roomList[newRoom] === undefined) {
+      app.addRoomToList[newRoom] = true;
+    }
   });
 };
 
@@ -69,7 +71,7 @@ app.renderMessage = function(msgObj) {
 
   $('.username').click(app.handleUsernameClick);
 
-  if (app.friendList.includes(msgObj.username)) {
+  if (app.friendList[msgObj.username]) {
     $template.find('.text').addClass('friend');
   }
 };
@@ -81,15 +83,15 @@ app.handleUsernameClick = function(event) {
 
 // render definition - helper
 app.addFriendToList = function(friend) {
-  if (!app.friendList.includes(friend)) {
-    app.friendList.push(friend);
+  if (app.friendList[friend] === undefined) {
+    app.friendList[friend] = true;
   }
 };
 
 // render definition - helper
 app.addRoomToList = function(room) {
-  if (!app.roomList.includes(room)) {
-    app.roomList.push(room);
+  if (app.roomList[room] === undefined) {
+    app.roomList[room] = true;
     app.renderRoom(room);
   }
 };
