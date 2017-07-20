@@ -56,9 +56,9 @@ app.clearMessages = function() {
 app.renderMessage = function(msgObj) {
   var $template = $(`
     <div class="chat">
-      <span class="text"}>${msgObj.text}</span>
-      <span class="username">${msgObj.username}</span>
-      <span>@${msgObj.roomname}</span>
+      <span class="text"}>${_.escape(msgObj.text)}</span>
+      <span class="username">${_.escape(msgObj.username)}</span>
+      <span>@${_.escape(msgObj.roomname)}</span>
       <span>@${msgObj.createdAt}</span>
     </div>
   `);
