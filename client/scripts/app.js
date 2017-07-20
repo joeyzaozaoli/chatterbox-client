@@ -10,7 +10,9 @@ app.init = function() {
   // re-render on user event
   $('#roomSelect').change(app.fetch);
   // re-render on model change
-  setInterval(app.fetch, 5000);
+  $('#send').submit(app.fetch);
+  // re-render on model change
+  setInterval(app.fetch, 10000);
 
   // update model on user event
   $('#send').submit(app.handleSubmit);
