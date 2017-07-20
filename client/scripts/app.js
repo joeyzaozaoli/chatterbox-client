@@ -97,7 +97,7 @@ app.addRoomToList = function(room) {
 // render definition - helper
 app.renderRoom = function(room) {
   $('#roomSelect').append(`
-    <option>${room}</option>
+    <option>${_.escape(room)}</option>
   `);
 };
 
