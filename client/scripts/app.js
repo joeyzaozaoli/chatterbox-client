@@ -5,21 +5,23 @@ app.roomList = [];
 app.friendList = [];
 
 app.init = function() {
-  // initial render
+  // render on initialization
   app.fetch();
   // re-render on user event
   $('#roomSelect').change(app.fetch);
   // re-render on model change
   setInterval(app.fetch, 5000);
 
+  // update model on user event
+  $('#send').submit(app.handleSubmit);
+  // update model on user event
   $('#newRoom').click(function() {
     var newRoom = prompt("Please name the new room:");
     app.addRoomToList(newRoom);
   });
-
-  $('#send').submit(app.handleSubmit);
 };
 
+// render definition
 app.fetch = function() {
   $.ajax({
     url: app.server,
@@ -30,6 +32,7 @@ app.fetch = function() {
       console.log('get success', data);
 
       app.clearMessages();
+
       _.each(data.results, function(msgObj) {
         if (msgObj.roomname === $('#roomSelect').find(':selected').val()) {
           app.renderMessage(msgObj);
@@ -44,10 +47,12 @@ app.fetch = function() {
   });
 };
 
+// render definition - helper
 app.clearMessages = function() {
   $('#chats').empty();
 };
 
+// render definition - helper
 app.renderMessage = function(msgObj) {
   var $template = $(`
     <div class="chat">
@@ -58,25 +63,28 @@ app.renderMessage = function(msgObj) {
     </div>
   `);
 
+  $('#chats').append($template);
+
   $('.username').click(app.handleUsernameClick);
 
   if (app.friendList.includes(msgObj.username)) {
     $template.find('.text').addClass('friend');
   }
-
-  $('#chats').append($template);
 };
 
+// render definition - helper
 app.handleUsernameClick = function(event) {
   app.addFriendToList(event.target.textContent);
 };
 
+// render definition - helper
 app.addFriendToList = function(friend) {
   if (!app.friendList.includes(friend)) {
     app.friendList.push(friend);
   }
 };
 
+// render definition - helper
 app.addRoomToList = function(room) {
   if (!app.roomList.includes(room)) {
     app.roomList.push(room);
@@ -84,12 +92,14 @@ app.addRoomToList = function(room) {
   }
 };
 
+// render definition - helper
 app.renderRoom = function(room) {
   $('#roomSelect').append(`
     <option>${room}</option>
   `);
 };
 
+// update definition
 app.handleSubmit = function(event) {
   event.preventDefault();
   var message = {};
@@ -100,6 +110,7 @@ app.handleSubmit = function(event) {
   $('#message').val('');
 };
 
+// update definition (cont'd)
 app.send = function(msgObj) {
   $.ajax({
     url: app.server,
