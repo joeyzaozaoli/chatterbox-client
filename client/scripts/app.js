@@ -13,7 +13,7 @@ app.init = function() {
   // render view on user event: submit form
   $('#send').submit(app.fetch);
   // render view on model change
-  setInterval(app.fetch, 5000);
+  setInterval(app.fetch, 10000);
 
   // CRUD model on user event: submit form
   $('#send').submit(app.handleSubmit);
@@ -40,7 +40,7 @@ app.fetch = function() {
 
       _.each(data.results, function(msgObj) {
         if (msgObj.roomname === $('#roomSelect').find(':selected').val()) {
-          app.renderMessage(msgObj);
+          app.displayMessage(msgObj);
         }
         app.addRoomToList(msgObj.roomname);
       });
@@ -58,6 +58,18 @@ app.clearMessages = function() {
 };
 
 // render definition - helper
+app.displayMessage = function(msgObj) {
+  var template = app.renderMessage(msgObj);
+  $('#chats').append(template);
+
+  // CRUD model on user event: click user name
+  $('.username').click(app.handleUsernameClick);
+  if (app.friendList[msgObj.username]) {
+    template.find('.text').addClass('friend');
+  }
+};
+
+// render definition - helper
 app.renderMessage = function(msgObj) {
   var $template = $(`
     <div class="chat">
@@ -68,13 +80,7 @@ app.renderMessage = function(msgObj) {
     </div>
   `);
 
-  $('#chats').append($template);
-
-  // CRUD model on user event: click user name
-  $('.username').click(app.handleUsernameClick);
-  if (app.friendList[msgObj.username]) {
-    $template.find('.text').addClass('friend');
-  }
+  return $template;
 };
 
 // render definition - helper
