@@ -5,18 +5,19 @@ app.roomList = {};
 app.friendList = {};
 
 app.init = function() {
-  // render on initialization
+  // render view on initialization
   app.fetch();
-  // re-render on user event
-  $('#roomSelect').change(app.fetch);
-  // re-render on model change
-  $('#send').submit(app.fetch);
-  // re-render on model change
-  setInterval(app.fetch, 10000);
 
-  // update model on user event
+  // render view on user event: change dropdown selection
+  $('#roomSelect').change(app.fetch);
+  // render view on user event: submit form
+  $('#send').submit(app.fetch);
+  // render view on model change
+  setInterval(app.fetch, 5000);
+
+  // CRUD model on user event: submit form
   $('#send').submit(app.handleSubmit);
-  // update model on user event
+  // CRUD model on user event: create room
   $('#newRoom').click(function() {
     var newRoom = prompt("Please name the new room:");
     if (app.roomList[newRoom] === undefined) {
@@ -103,7 +104,7 @@ app.renderRoom = function(room) {
   `);
 };
 
-// update definition
+// CRUD definition
 app.handleSubmit = function(event) {
   event.preventDefault();
   var message = {};
@@ -114,7 +115,7 @@ app.handleSubmit = function(event) {
   $('#message').val('');
 };
 
-// update definition (cont'd)
+// CRUD definition (cont'd)
 app.send = function(msgObj) {
   $.ajax({
     url: app.server,
