@@ -70,8 +70,8 @@ app.renderMessage = function(msgObj) {
 
   $('#chats').append($template);
 
+  // CRUD model on user event: click user name
   $('.username').click(app.handleUsernameClick);
-
   if (app.friendList[msgObj.username]) {
     $template.find('.text').addClass('friend');
   }
