@@ -5,28 +5,21 @@ app.roomList = {};
 app.friendList = {};
 
 app.init = function() {
-  // render view on initialization
   app.fetch();
 
-  // render view on user event: change dropdown selection
-  $('#roomSelect').change(app.fetch);
-  // render view on user event: submit form
+  // message model CRUD -> render message view
+  setInterval(app.fetch, 10000);
   $('#send').submit(app.fetch);
-  // render view on model change
-  // setInterval(app.fetch, 10000);
+  // user event: change room -> render message view
+  $('#roomSelect').change(app.fetch);
 
-  // CRUD model on user event: submit form
+  // user event: submit form -> CRUD message model
   $('#send').submit(app.handleSubmit);
-  // CRUD model on user event: create room
-  $('#newRoom').click(function() {
-    var newRoom = prompt("Please name the new room:");
-    if (app.roomList[newRoom] === undefined) {
-      app.addRoomToList[newRoom] = true;
-    }
-  });
+  // user event: create room -> CRUD room model
+  $('#newRoom').click(app.handleCreateRoom);
 };
 
-// render definition
+// set function to render message view
 app.fetch = function() {
   $.ajax({
     url: app.server,
@@ -38,12 +31,10 @@ app.fetch = function() {
 
       var messages = data.results;
 
-      // call function to render messages
       app.displayMessages(messages);
 
-      messages.forEach(function(msgObj) {
-        app.addRoomToList(msgObj.roomname);
-      });
+      // outside event -> CRUD room model
+      app.updateRoomList(messages);
     },
 
     error: function(data) {
@@ -52,7 +43,6 @@ app.fetch = function() {
   });
 };
 
-// set function to render messages (1)
 app.displayMessages = function(msgArr) {
   $('#chats').empty();
 
@@ -60,7 +50,6 @@ app.displayMessages = function(msgArr) {
   $('#chats').append($template);
 };
 
-// set function to render messages (2)
 app.renderMessages = function(msgArr) {
   var $template = $('<div></div>');
 
@@ -74,7 +63,6 @@ app.renderMessages = function(msgArr) {
   return $template;
 };
 
-// set function to render messages (3)
 app.renderMessage = function(msgObj) {
   var $template = $(`
     <div class="chat">
@@ -106,16 +94,7 @@ app.addFriendToList = function(friend) {
   }
 };
 
-// render definition - helper
-app.addRoomToList = function(room) {
-  if (app.roomList[room] === undefined) {
-    app.roomList[room] = true;
-    // call function to render rooms
-    app.displayRooms(Object.keys(app.roomList));
-  }
-};
-
-// set function to render rooms (1)
+// set function to render room view
 app.displayRooms = function(rooms) {
   $('#roomSelect').empty();
 
@@ -125,7 +104,6 @@ app.displayRooms = function(rooms) {
   });
 };
 
-// set function to render rooms (2)
 app.renderRoom = function(room) {
   var $template = $(`
     <option>${_.escape(room)}</option>
@@ -134,7 +112,7 @@ app.renderRoom = function(room) {
   return $template;
 };
 
-// CRUD definition
+// set function to CRUD message model
 app.handleSubmit = function(event) {
   event.preventDefault();
   var message = {};
@@ -145,7 +123,6 @@ app.handleSubmit = function(event) {
   $('#message').val('');
 };
 
-// CRUD definition (cont'd)
 app.send = function(msgObj) {
   $.ajax({
     url: app.server,
@@ -159,6 +136,27 @@ app.send = function(msgObj) {
       console.log('send failure');
     }
   });
+};
+
+// set function to CRUD room model
+app.handleCreateRoom = function() {
+  var newRoom = prompt("Please name the new room:");
+  app.addRoomToList(newRoom);
+};
+
+app.updateRoomList = function(msgArr) {
+  msgArr.forEach(function(msgObj) {
+    app.addRoomToList(msgObj.roomname);
+  });
+};
+
+app.addRoomToList = function(room) {
+  if (app.roomList[room] === undefined) {
+    app.roomList[room] = true;
+
+    // room model CRUD -> render room view
+    app.displayRooms(Object.keys(app.roomList));
+  }
 };
 
 $(document).ready(function() {
