@@ -13,7 +13,7 @@ app.init = function() {
   // render view on user event: submit form
   $('#send').submit(app.fetch);
   // render view on model change
-  setInterval(app.fetch, 10000);
+  // setInterval(app.fetch, 10000);
 
   // CRUD model on user event: submit form
   $('#send').submit(app.handleSubmit);
@@ -36,12 +36,12 @@ app.fetch = function() {
     success: function(data) {
       console.log('get success', data);
 
-      app.clearMessages();
+      var messages = data.results;
 
-      _.each(data.results, function(msgObj) {
-        if (msgObj.roomname === $('#roomSelect').find(':selected').val()) {
-          app.displayMessage(msgObj);
-        }
+      // call function to render messages
+      app.displayMessages(messages);
+
+      messages.forEach(function(msgObj) {
         app.addRoomToList(msgObj.roomname);
       });
     },
@@ -52,24 +52,29 @@ app.fetch = function() {
   });
 };
 
-// render definition - helper
-app.clearMessages = function() {
+// set function to render messages (1)
+app.displayMessages = function(msgArr) {
   $('#chats').empty();
+
+  var $template = app.renderMessages(msgArr);
+  $('#chats').append($template);
 };
 
-// render definition - helper
-app.displayMessage = function(msgObj) {
-  var template = app.renderMessage(msgObj);
-  $('#chats').append(template);
+// set function to render messages (2)
+app.renderMessages = function(msgArr) {
+  var $template = $('<div></div>');
 
-  // CRUD model on user event: click user name
-  $('.username').click(app.handleUsernameClick);
-  if (app.friendList[msgObj.username]) {
-    template.find('.text').addClass('friend');
-  }
+  msgArr.forEach(function(msgObj) {
+    if (msgObj.roomname === $('#roomSelect').find(':selected').val()) {
+      var $message = app.renderMessage(msgObj);
+      $template.append($message);
+    }
+  });
+
+  return $template;
 };
 
-// render definition - helper
+// set function to render messages (3)
 app.renderMessage = function(msgObj) {
   var $template = $(`
     <div class="chat">
@@ -79,6 +84,12 @@ app.renderMessage = function(msgObj) {
       <span>@${msgObj.createdAt}</span>
     </div>
   `);
+
+  // CRUD model on user event: click user name
+  $template.find('.username').click(app.handleUsernameClick);
+  if (app.friendList[msgObj.username]) {
+    $template.find('.text').addClass('friend');
+  }
 
   return $template;
 };
@@ -99,15 +110,28 @@ app.addFriendToList = function(friend) {
 app.addRoomToList = function(room) {
   if (app.roomList[room] === undefined) {
     app.roomList[room] = true;
-    app.renderRoom(room);
+    // call function to render rooms
+    app.displayRooms(Object.keys(app.roomList));
   }
 };
 
-// render definition - helper
+// set function to render rooms (1)
+app.displayRooms = function(rooms) {
+  $('#roomSelect').empty();
+
+  rooms.forEach(function(room) {
+    var $room = app.renderRoom(room);
+    $('#roomSelect').append($room);
+  });
+};
+
+// set function to render rooms (2)
 app.renderRoom = function(room) {
-  $('#roomSelect').append(`
+  var $template = $(`
     <option>${_.escape(room)}</option>
   `);
+
+  return $template;
 };
 
 // CRUD definition
