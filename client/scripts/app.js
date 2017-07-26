@@ -73,7 +73,7 @@ app.renderMessage = function(msgObj) {
     </div>
   `);
 
-  // CRUD model on user event: click user name
+  // user event: click user name -> CRUD friend model
   $template.find('.username').click(app.handleUsernameClick);
   if (app.friendList[msgObj.username]) {
     $template.find('.text').addClass('friend');
@@ -82,15 +82,17 @@ app.renderMessage = function(msgObj) {
   return $template;
 };
 
-// render definition - helper
+// set function to CRUD friend model
 app.handleUsernameClick = function(event) {
   app.addFriendToList(event.target.textContent);
 };
 
-// render definition - helper
 app.addFriendToList = function(friend) {
   if (app.friendList[friend] === undefined) {
     app.friendList[friend] = true;
+
+    // friend model CRUD -> render message view
+    app.fetch();
   }
 };
 
