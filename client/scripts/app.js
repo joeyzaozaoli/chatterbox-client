@@ -84,15 +84,15 @@ app.renderMessage = function(msgObj) {
 
 // set function to CRUD friend model
 app.handleUsernameClick = function(event) {
-  app.addFriendToList(event.target.textContent);
+  // friend model CRUD -> render message view
+  app.addFriendToList(event.target.textContent, app.fetch);
 };
 
-app.addFriendToList = function(friend) {
+app.addFriendToList = function(friend, cb) {
   if (app.friendList[friend] === undefined) {
     app.friendList[friend] = true;
 
-    // friend model CRUD -> render message view
-    app.fetch();
+    cb();
   }
 };
 
@@ -143,21 +143,22 @@ app.send = function(msgObj) {
 // set function to CRUD room model
 app.handleCreateRoom = function() {
   var newRoom = prompt("Please name the new room:");
-  app.addRoomToList(newRoom);
+  // room model CRUD -> render room view
+  app.addRoomToList(newRoom, app.displayRooms);
 };
 
 app.updateRoomList = function(msgArr) {
   msgArr.forEach(function(msgObj) {
-    app.addRoomToList(msgObj.roomname);
+    // room model CRUD -> render room view
+    app.addRoomToList(msgObj.roomname, app.displayRooms);
   });
 };
 
-app.addRoomToList = function(room) {
+app.addRoomToList = function(room, cb) {
   if (app.roomList[room] === undefined) {
     app.roomList[room] = true;
 
-    // room model CRUD -> render room view
-    app.displayRooms(Object.keys(app.roomList));
+    cb(Object.keys(app.roomList));
   }
 };
 
