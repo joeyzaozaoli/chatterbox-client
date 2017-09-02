@@ -1,7 +1,7 @@
 var app = {};
 
 app.server = 'http://parse.sfm8.hackreactor.com/chatterbox/classes/messages';
-app.roomList = {};
+app.roomList = {All: true};
 app.friendList = {};
 
 app.init = function() {
@@ -55,7 +55,7 @@ app.renderMessages = function(msgArr) {
   var $template = $('<div></div>');
 
   msgArr.forEach(function(msgObj) {
-    if (msgObj.roomname === $('#roomSelect').find(':selected').val()) {
+    if (msgObj.roomname === $('#roomSelect').find(':selected').val() || $('#roomSelect').find(':selected').val() === 'All') {
       var $message = app.renderMessage(msgObj);
       $template.append($message);
     }
@@ -108,9 +108,17 @@ app.displayRooms = function(rooms) {
 };
 
 app.renderRoom = function(room) {
-  var $template = $(`
-    <option>${_.escape(room)}</option>
-  `);
+  var $template;
+
+  if (room === 'All') {
+    $template = $(`
+      <option selected>${_.escape(room)}</option>
+    `);
+  } else {
+    $template = $(`
+      <option>${_.escape(room)}</option>
+    `);
+  }
 
   return $template;
 };
