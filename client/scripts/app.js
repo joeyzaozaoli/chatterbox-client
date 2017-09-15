@@ -24,7 +24,7 @@ app.init = function() {
 app.fetch = function() {
   $.ajax({
     url: app.server,
-    type: 'GET',
+    method: 'GET',
     data: {order: '-createdAt'},
 
     success: function(data) {
@@ -137,12 +137,14 @@ app.handleSubmit = function(event) {
 app.send = function(msgObj) {
   $.ajax({
     url: app.server,
-    type: 'POST',
+    method: 'POST',
     data: JSON.stringify(msgObj),
     contentType: 'application/json',
+
     success: function() {
       console.log('send success');
     },
+
     error: function() {
       console.log('send failure');
     }
